@@ -241,7 +241,7 @@ namespace amount_in_words.Implementation
             var s = sb.ToString(reverseOrder: true);
 
             if (!string.IsNullOrWhiteSpace(s) && _firstCapital)
-                s = s.Substring(0, 1).ToUpper() + s[1..];
+                s =  $"{s.Substring(0, 1).ToUpper()}{s[1..]}";
 
             return s;
         }
