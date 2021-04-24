@@ -188,7 +188,7 @@ namespace amount_in_words.Implementation
 
             if ((number >= (long)Math.Pow(10, 15)) || number < 0)
             {
-                throw new Exception("Данное число не поддерживается");
+                throw new Exception("Unsupported currency amount value");
             }
 
             StringBuilder sb = new StringBuilder();
