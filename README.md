@@ -1,6 +1,8 @@
 # amount-in-words
 Lightweight REST API which converts currency amount into words
 
+**Currently only Russian rubles are supported!**
+
 ## How to use
 To convert currency amount into word http call to the follow endpoint should be performed `https://{host}/amounttoword/?amount={value}`
 
