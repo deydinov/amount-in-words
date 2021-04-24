@@ -15,7 +15,7 @@ where `{value}` it is a currency amount which should be converted into words.
 ```
 
 ## Additional query parameters
-`convertCents=false` - indicates thet fractional part of amount (cents or copecks) short't be converted
+`convertCents=false` - indicates that fractional part of amount shouldt't be converted
 
 `curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://{host}/amounttoword?amount=984655.99&convertCents=false`
 
