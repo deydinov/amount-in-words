@@ -7,7 +7,6 @@ namespace amount_in_words.Models
 {
     public class AmountResponse
     {
-        public string Amount { get; set; }
-        public string Word { get; set; }
+        public string Result { get; set; }
     }
 }

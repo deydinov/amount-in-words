@@ -1,17 +1,12 @@
 using amount_in_words.Abstractions;
-using amount_in_words.Implementation.RU;
+using amount_in_words.Filters;
+using amount_in_words.Implementation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace amount_in_words
 {
@@ -27,8 +22,11 @@ namespace amount_in_words
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IAmountToWordConverter, AmountToWordConverter>();
-            services.AddControllers();
+            services.AddSingleton<IAmountToWordConverter, RublesToWordConverter>();
+            services.AddControllers(opt =>
+                {
+                    opt.Filters.Add(new ExceptionFilter());
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

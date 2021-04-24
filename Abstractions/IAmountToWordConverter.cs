@@ -7,6 +7,6 @@ namespace amount_in_words.Abstractions
 {
     public interface IAmountToWordConverter
     {
-        string CurrencyToWord(double amount, bool convertCents = true);
+        string CurrencyToWord(decimal amount, bool convertCents = true);
     }
 }

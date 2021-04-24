@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace amount_in_words.Abstractions
+namespace amount_in_words.Enums
 {
     public enum TextCase
     {

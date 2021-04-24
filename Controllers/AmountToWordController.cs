@@ -24,32 +24,15 @@ namespace amount_in_words.Controllers
             _converter = converter;
         }
 
-        [HttpPost]
-        public IActionResult GetAmountInWord([FromBody] AmountRequest request)
+        [HttpGet]
+        public IActionResult GetAmountInWord([FromQuery] decimal amount, [FromQuery] bool convertCents = true)
         {
-            return GetAmountInWord(request.Amount, request.ConvertCents);
-        }
-
-        private IActionResult GetAmountInWord(double amount, bool convertCents)
-        {
-            try
+            var resp = new AmountResponse
             {
-                NumberFormatInfo f = new NumberFormatInfo { NumberGroupSeparator = " " };
-                return Ok(new AmountResponse
-                {
-                    Amount = amount.ToString("#,0.00", f),
-                    Word = _converter.CurrencyToWord(amount, convertCents)
-                });;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                return new ObjectResult(new WrongResponse { Error = ex.Message })
-                {
-                    StatusCode = 500
-                };
-            }
+                Result = _converter.CurrencyToWord(amount, convertCents)
+            };
 
+            return Ok(resp);
         }
     }
 }

@@ -1,12 +1,15 @@
 ﻿using amount_in_words.Abstractions;
+using amount_in_words.Enums;
+using amount_in_words.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace amount_in_words.Implementation.RU
+namespace amount_in_words.Implementation
 {
-    public class AmountToWordConverter : IAmountToWordConverter
+    public class RublesToWordConverter : IAmountToWordConverter
     {
         readonly string zero = "ноль";
         readonly string firstMale = "один";
@@ -34,18 +37,14 @@ namespace amount_in_words.Implementation.RU
 
         bool IsPluralGenitive(int _digits)
         {
-            if (_digits >= 5 || _digits == 0)
-                return true;
-
-            return false;
+            return _digits >= 5 || _digits == 0;
         }
+
         bool IsSingularGenitive(int _digits)
         {
-            if (_digits >= 2 && _digits <= 4)
-                return true;
-
-            return false;
+            return _digits >= 2 && _digits <= 4;
         }
+
         int LastDigit(long _amount)
         {
             long amount = _amount;
@@ -60,99 +59,117 @@ namespace amount_in_words.Implementation.RU
         }
 
         /// <summary>
-        /// Десять тысяч рублей 67 копеек
+        /// Convert number to word
         /// </summary>
-        /// <param name="_amount"></param>
-        /// <param name="_firstCapital"></param>
+        /// <param name="amount"></param>
+        /// <param name="convertCents"></param>
         /// <returns></returns>
-        public string CurrencyToWord(double amount, bool convertCents = true)
+        public string CurrencyToWord(decimal amount, bool convertCents = true)
         {
-            long rublesAmount = (long)Math.Floor(amount);
-            long copecksAmount = ((long)Math.Round(amount * 100)) % 100;
-            int lastRublesDigit = LastDigit(rublesAmount);
-            int lastCopecksDigit = LastDigit(copecksAmount);
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(ConvertRubles(amount));
+            sb.AppendLine(ConvertCopecks(amount, convertCents));
+            return StringHelper.ToString(sb);
+        }
 
-            string s = NumeralsToTxt(rublesAmount, TextCase.Nominative) + " ";
+        string ConvertRubles(decimal amount)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            long rublesAmount = (long)Math.Floor(amount);
+            int lastRublesDigit = LastDigit(rublesAmount);
+
+            sb.AddLine(NumeralsToTxt(rublesAmount, TextCase.Nominative));
 
             if (IsPluralGenitive(lastRublesDigit))
             {
-                s += rubles[3] + " ";
+                sb.AddLine(rubles[3]);
             }
             else if (IsSingularGenitive(lastRublesDigit))
             {
-                s += rubles[2] + " ";
+                sb.AddLine(rubles[2]);
             }
             else
             {
-                s += rubles[1] + " ";
+                sb.AddLine(rubles[1]);
             }
 
-            s += convertCents ? NumeralsToTxt(copecksAmount, TextCase.Nominative, false, false) + " " : string.Format("{0:00} ", copecksAmount);
+            return StringHelper.ToString(sb);
+        }
+
+        string ConvertCopecks(decimal amount, bool copecksInWord)
+        {
+            StringBuilder sb = new StringBuilder();
+            long copecksAmount = ((long)Math.Round(amount * 100)) % 100;
+            int lastCopecksDigit = LastDigit(copecksAmount);
+
+            sb.AddLine(copecksInWord ? NumeralsToTxt(copecksAmount, TextCase.Nominative, false, false) : string.Format("{0:00}", copecksAmount));
 
             if (IsPluralGenitive(lastCopecksDigit))
             {
-                s += copecks[3] + " ";
+                sb.AddLine(copecks[3]);
             }
             else if (IsSingularGenitive(lastCopecksDigit))
             {
-                s += copecks[2] + " ";
+                sb.AddLine(copecks[2]);
             }
             else
             {
-                s += copecks[1] + " ";
+                sb.AddLine(copecks[1]);
             }
+            return StringHelper.ToString(sb);
 
-            return s.Trim();
         }
 
-        string MakeText(int _digits, string[] _hundreds, string[] _tens, string[] _from3till19, string _second, string _first, string[] _power)
+        string MakeText(int _digits, string[] _hundreds, string[] _tens, string[] _from3till19, string _second, string _first, string[] _power = null)
         {
-            string s = "";
+            StringBuilder sb = new StringBuilder();
+
             int digits = _digits;
 
             if (digits >= 100)
             {
-                s += _hundreds[digits / 100] + " ";
+                sb.AddLine(_hundreds[digits / 100]);
                 digits %= 100;
             }
             if (digits >= 20)
             {
-                s += _tens[digits / 10 - 1] + " ";
+                sb.AddLine(_tens[digits / 10 - 1]);
                 digits %= 10;
             }
 
             if (digits >= 3)
             {
-                s += _from3till19[digits - 2] + " ";
+                sb.AddLine(_from3till19[digits - 2]);
             }
             else if (digits == 2)
             {
-                s += _second + " ";
+                sb.AddLine(_second);
             }
             else if (digits == 1)
             {
-                s += _first + " ";
+                sb.AddLine(_first);
             }
 
-            if (_digits != 0 && _power.Length > 0)
+            if (_digits != 0 && _power?.Length > 0)
             {
                 digits = LastDigit(_digits);
 
                 if (IsPluralGenitive(digits))
                 {
-                    s += _power[3] + " ";
+                    sb.AddLine(_power[3]);
                 }
                 else if (IsSingularGenitive(digits))
                 {
-                    s += _power[2] + " ";
+                    sb.AddLine(_power[2]);
                 }
                 else
                 {
-                    s += _power[1] + " ";
+                    sb.AddLine(_power[1]);
                 }
             }
 
-            return s;
+            return StringHelper.ToString(sb);
         }
 
         /// <summary>
@@ -165,7 +182,6 @@ namespace amount_in_words.Implementation.RU
         /// <returns></returns>
         string NumeralsToTxt(long _sourceNumber, TextCase _case, bool _isMale = true, bool _firstCapital = true)
         {
-            string s = "";
             long number = _sourceNumber;
             int remainder;
             int power = 0;
@@ -175,6 +191,8 @@ namespace amount_in_words.Implementation.RU
                 throw new Exception("Данное число не поддерживается");
             }
 
+            StringBuilder sb = new StringBuilder();
+
             while (number > 0)
             {
                 remainder = (int)(number % 1000);
@@ -183,37 +201,30 @@ namespace amount_in_words.Implementation.RU
                 switch (power)
                 {
                     case 12:
-                        s = MakeText(remainder, hundreds, tens, from3till19, secondMale, firstMale, trillions) + s;
+                        sb.AddLine(MakeText(remainder, hundreds, tens, from3till19, secondMale, firstMale, trillions));
                         break;
                     case 9:
-                        s = MakeText(remainder, hundreds, tens, from3till19, secondMale, firstMale, billions) + s;
+                        sb.AddLine(MakeText(remainder, hundreds, tens, from3till19, secondMale, firstMale, billions));
                         break;
                     case 6:
-                        s = MakeText(remainder, hundreds, tens, from3till19, secondMale, firstMale, millions) + s;
+                        sb.AddLine(MakeText(remainder, hundreds, tens, from3till19, secondMale, firstMale, millions));
                         break;
                     case 3:
-                        switch (_case)
-                        {
-                            case TextCase.Accusative:
-                                s = MakeText(remainder, hundreds, tens, from3till19, secondFemale, firstFemaleAccusative, thousandsAccusative) + s;
-                                break;
-                            default:
-                                s = MakeText(remainder, hundreds, tens, from3till19, secondFemale, firstFemale, thousands) + s;
-                                break;
-                        }
+                        sb.AddLine(_case == TextCase.Accusative
+                            ? MakeText(remainder, hundreds, tens, from3till19, secondFemale, firstFemaleAccusative, thousandsAccusative)
+                            : MakeText(remainder, hundreds, tens, from3till19, secondFemale, firstFemale, thousands));
                         break;
                     default:
-                        string[] powerArray = { };
                         switch (_case)
                         {
                             case TextCase.Genitive:
-                                s = MakeText(remainder, hundredsGenetive, tensGenetive, from3till19Genetive, _isMale ? secondMaleGenetive : secondFemaleGenetive, _isMale ? firstMaleGenetive : firstFemale, powerArray) + s;
+                                sb.AddLine(MakeText(remainder, hundredsGenetive, tensGenetive, from3till19Genetive, _isMale ? secondMaleGenetive : secondFemaleGenetive, _isMale ? firstMaleGenetive : firstFemale));
                                 break;
                             case TextCase.Accusative:
-                                s = MakeText(remainder, hundreds, tens, from3till19, _isMale ? secondMale : secondFemale, _isMale ? firstMale : firstFemaleAccusative, powerArray) + s;
+                                sb.AddLine(MakeText(remainder, hundreds, tens, from3till19, _isMale ? secondMale : secondFemale, _isMale ? firstMale : firstFemaleAccusative));
                                 break;
                             default:
-                                s = MakeText(remainder, hundreds, tens, from3till19, _isMale ? secondMale : secondFemale, _isMale ? firstMale : firstFemale, powerArray) + s;
+                                sb.AddLine(MakeText(remainder, hundreds, tens, from3till19, _isMale ? secondMale : secondFemale, _isMale ? firstMale : firstFemale));
                                 break;
                         }
                         break;
@@ -224,13 +235,18 @@ namespace amount_in_words.Implementation.RU
 
             if (_sourceNumber == 0)
             {
-                s = zero + " ";
+                sb.AddLine(zero);
             }
 
-            if (s != "" && _firstCapital)
-                s = s.Substring(0, 1).ToUpper() + s.Substring(1);
+            var s = sb.ToString(reverseOrder: true);
 
-            return s.Trim();
+            if (!string.IsNullOrWhiteSpace(s) && _firstCapital)
+                s = s.Substring(0, 1).ToUpper() + s[1..];
+
+            return s;
         }
+
+
     }
+    
 }
