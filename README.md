@@ -10,23 +10,23 @@ where `{value}` it is a currency amount which should be converted into words.
 
 ```json
 {
-    "result": "Одна тысяча двести тридцать четыре рубля пятьдесят пять копеек"
+    "result": "РћРґРЅР° С‚С‹СЃСЏС‡Р° РґРІРµСЃС‚Рё С‚СЂРёРґС†Р°С‚СЊ С‡РµС‚С‹СЂРµ СЂСѓР±Р»СЏ РїСЏС‚СЊРґРµСЃСЏС‚ РїСЏС‚СЊ РєРѕРїРµРµРє"
 }
 ```
 
 ## Additional query parameters
 `convertCents=false` - indicates thet fractional part of amount (cents or copecks) short't be converted
 
-`curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://{host}/amounttoword?amount=1234.55&convertCents=false`
+`curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://{host}/amounttoword?amount=984655.99&convertCents=false`
 
 ```json
 {
-    "result": "Шестьдесят девять тысяч двести восемьдесят четыре рубля шестьдесят семь копеек"
+    "result": "Р”РµРІСЏС‚СЊСЃРѕС‚ РІРѕСЃРµРјСЊРґРµСЃСЏС‚ С‡РµС‚С‹СЂРµ С‚С‹СЃСЏС‡Рё С€РµСЃС‚СЊСЃРѕС‚ РїСЏС‚СЊРґРµСЃСЏС‚ РїСЏС‚СЊ СЂСѓР±Р»РµР№ 99 РєРѕРїРµРµРє"
 }
 ```
 
 ## Possible errors
-Service supports currency amount from 0 up to 999 999 999 999 999.99. If provided amount is bigger than supported or less then zero service will throw an exception with http response code 500
+Service supports amount value between 0 and 999 999 999 999 999.99. If provided amount is bigger than supported or less than zero service will throw an exception with http response code 500
 ```json
 {
     "error": "Unsupported currency amount value"
@@ -34,7 +34,7 @@ Service supports currency amount from 0 up to 999 999 999 999 999.99. If provide
 
 ## Live Demo
 
-`curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET  https://amount-in-words.azurewebsites.net/amounttoword?amount=984655.99`
+`curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET  https://amount-in-words.azurewebsites.net/amounttoword?amount=756781034.99`
 
 
 
