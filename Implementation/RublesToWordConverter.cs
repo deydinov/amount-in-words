@@ -69,7 +69,7 @@ namespace amount_in_words.Implementation
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(ConvertRubles(amount));
             sb.AppendLine(ConvertCopecks(amount, convertCents));
-            return StringHelper.ToString(sb);
+            return sb.ToString(false);
         }
 
         string ConvertRubles(decimal amount)
@@ -94,7 +94,7 @@ namespace amount_in_words.Implementation
                 sb.AddLine(rubles[1]);
             }
 
-            return StringHelper.ToString(sb);
+            return sb.ToString(false);
         }
 
         string ConvertCopecks(decimal amount, bool copecksInWord)
@@ -117,7 +117,7 @@ namespace amount_in_words.Implementation
             {
                 sb.AddLine(copecks[1]);
             }
-            return StringHelper.ToString(sb);
+            return sb.ToString(false);
 
         }
 
@@ -169,7 +169,7 @@ namespace amount_in_words.Implementation
                 }
             }
 
-            return StringHelper.ToString(sb);
+            return sb.ToString(false);
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace amount_in_words.Implementation
         string NumeralsToTxt(long _sourceNumber, TextCase _case, bool _isMale = true, bool _firstCapital = true)
         {
             long number = _sourceNumber;
-            int remainder;
+            int remainder = 0;
             int power = 0;
 
             if ((number >= (long)Math.Pow(10, 15)) || number < 0)

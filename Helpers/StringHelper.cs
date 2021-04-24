@@ -8,7 +8,7 @@ namespace amount_in_words.Helpers
 {
     public static class StringHelper
     {
-        public static string ToString(this StringBuilder sb, bool reverseOrder = false)
+        public static string ToString(this StringBuilder sb, bool reverseOrder)
         {
             var arr = sb.ToString().Split(Environment.NewLine);
             if (reverseOrder)
