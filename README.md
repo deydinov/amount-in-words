@@ -31,6 +31,7 @@ Service supports amount value between 0 and 999 999 999 999 999.99. If provided 
 {
     "error": "Unsupported currency amount value"
 }
+```
 
 ## Live Demo
 
